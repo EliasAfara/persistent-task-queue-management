@@ -2,7 +2,7 @@ CREATE DATABASE ral_tasks_queue;
 
 CREATE TABLE callback(
     callback_id SERIAL PRIMARY KEY,
-    label VARCHAR(255) NOT NULL
+    label VARCHAR(255) UNIQUE NOT NULL
 )
 
 CREATE TABLE events(
