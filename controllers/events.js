@@ -1,4 +1,4 @@
-const pool = require('../db');
+const { pool } = require('../db');
 
 const registerEvent = async (req, res) => {
   try {
@@ -19,9 +19,9 @@ const registerEvent = async (req, res) => {
         callback_label = 'multiply';
         break;
       default:
-        console.log(
-          'This event is not related to any of the available callbacks'
-        );
+        return res.status(401).json({
+          msg: 'This event is not related to any of the available callbacks',
+        });
     }
 
     const callback = await pool.query(
@@ -38,7 +38,7 @@ const registerEvent = async (req, res) => {
 
       res.status(200).json(newEvent.rows[0]);
     }
-    console.log(type, data, callback.rows[0].callback_id);
+    // console.log(type, data, callback.rows[0].callback_id);
   } catch (err) {
     console.log(err.message);
   }
