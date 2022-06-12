@@ -91,11 +91,11 @@ const Form = () => {
           </div>
         </div>
         <div className='form-row'>
-          <div class='form-group col-md-2'>
+          <div className='form-group col-md-2'>
             <label htmlFor='dataX-value'>Data: x</label>
             <input
               type='number'
-              class='form-control'
+              className='form-control'
               id='dataX-value'
               value={data.x}
               onChange={(e) =>
@@ -105,11 +105,11 @@ const Form = () => {
             />
           </div>
 
-          <div class='form-group col-md-2'>
+          <div className='form-group col-md-2'>
             <label htmlFor='dataY-value'>Data: y</label>
             <input
               type='number'
-              class='form-control'
+              className='form-control'
               id='dataY-value'
               value={data.y}
               onChange={(e) =>
@@ -120,7 +120,7 @@ const Form = () => {
           </div>
         </div>
 
-        <button type='submit' class='btn btn-success'>
+        <button type='submit' className='btn btn-success'>
           Submit
         </button>
       </form>
