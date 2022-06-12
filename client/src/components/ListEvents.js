@@ -39,6 +39,7 @@ const ListEvents = () => {
       <table class='table mt-5 text-center'>
         <thead>
           <tr>
+            <th>Order</th>
             <th>Event</th>
             <th>Created At</th>
             <th>Scheduled For</th>
@@ -50,6 +51,7 @@ const ListEvents = () => {
         <tbody>
           {events.map((event) => (
             <tr key={event.event_id}>
+              <td>{event.event_id}</td>
               <td>{event.type}</td>
               <td>{dayjs(event.created_at).format('DD/MM/YYYY HH:mm:ss')}</td>
               <td>

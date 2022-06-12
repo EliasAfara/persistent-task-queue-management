@@ -48,7 +48,9 @@ const registerEvent = async (req, res) => {
 
 const getEvent = async (req, res) => {
   try {
-    const allEvent = await pool.query('SELECT * FROM events');
+    const allEvent = await pool.query(
+      'SELECT * FROM events ORDER BY event_id ASC'
+    );
 
     res.status(200).json(allEvent.rows);
   } catch (err) {
