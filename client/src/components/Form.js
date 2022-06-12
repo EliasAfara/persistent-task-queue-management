@@ -53,6 +53,7 @@ const Form = () => {
               id='eventTypeSelect'
               value={type}
               onChange={(e) => handleData('type', e.target.value)}
+              required
             >
               <option value='' disabled>
                 Select an event...
@@ -71,6 +72,7 @@ const Form = () => {
               id='scheduledForSelect'
               value={scheduled_for_time}
               onChange={(e) => handleData('scheduled_for_time', e.target.value)}
+              required
             >
               <option value='' disabled>
                 Select scheduled for time...
@@ -99,6 +101,7 @@ const Form = () => {
               onChange={(e) =>
                 handleData('data', { ...data, x: e.target.value })
               }
+              required
             />
           </div>
 
@@ -112,6 +115,7 @@ const Form = () => {
               onChange={(e) =>
                 handleData('data', { ...data, y: e.target.value })
               }
+              required
             />
           </div>
         </div>
