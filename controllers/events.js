@@ -2,7 +2,7 @@ const { pool } = require('../db');
 
 const registerEvent = async (req, res) => {
   try {
-    const { type, data } = req.body;
+    const { type, data, scheduled_for_time } = req.body;
     let callback_label = '';
 
     switch (type) {
@@ -32,8 +32,10 @@ const registerEvent = async (req, res) => {
     if (callback.rowCount !== 0) {
       let callback_id = callback.rows[0].callback_id;
       const newEvent = await pool.query(
-        'INSERT INTO events (type, data, callback_id) VALUES($1, $2, $3) RETURNING *',
-        [type, data, callback_id]
+        `INSERT INTO events (type, data, scheduled_for_time, scheduled_for, callback_id) VALUES($1, $2, $3, to_timestamp(${Date.now()} / 1000.0) + INTERVAL '${
+          scheduled_for_time || '1 second'
+        }' , $4) RETURNING *`,
+        [type, data, scheduled_for_time || '1 second', callback_id]
       );
 
       res.status(200).json(newEvent.rows[0]);
