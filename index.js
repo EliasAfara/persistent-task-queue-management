@@ -17,6 +17,16 @@ pgClient.connect((err, client) => {
     console.error('Error in connecting to database', err);
   } else {
     console.log('Database Connected');
+
+    // In case server shuts down and the events that were in procesing state stops.
+    // check table events for events with procesing state at the start of the server
+    // In case any were found, compare scheduled_for time with current time
+    // if current time was greater, fire the event callback immediatly
+    // else, calculate the remaining time and schedule it.
+
+    lib.continueStillProcessingEvent();
+
+    // listening to event notification after a new event was created
     const query = client.query('LISTEN new_event');
     pgClient.on('notification', async (event) => {
       const payload = JSON.parse(event.payload);
@@ -31,40 +41,28 @@ pgClient.connect((err, client) => {
           schedule.scheduleJob(scheduled_for, async function () {
             console.log('add', data.x + data.y);
 
-            const updatedEvent = await pool.query(updateQuery, [
-              'finished',
-              event_id,
-            ]);
+            await pool.query(updateQuery, ['finished', event_id]);
           });
           break;
         case 'subtract':
           schedule.scheduleJob(scheduled_for, async function () {
             console.log('subtract', data.x - data.y);
 
-            const updatedEvent = await pool.query(updateQuery, [
-              'finished',
-              event_id,
-            ]);
+            await pool.query(updateQuery, ['finished', event_id]);
           });
           break;
         case 'divide':
           schedule.scheduleJob(scheduled_for, async function () {
             console.log('divide', data.x / data.y);
 
-            const updatedEvent = await pool.query(updateQuery, [
-              'finished',
-              event_id,
-            ]);
+            await pool.query(updateQuery, ['finished', event_id]);
           });
           break;
         case 'multiply':
           schedule.scheduleJob(scheduled_for, async function () {
             console.log('multiply', data.x * data.y);
 
-            const updatedEvent = await pool.query(updateQuery, [
-              'finished',
-              event_id,
-            ]);
+            await pool.query(updateQuery, ['finished', event_id]);
           });
           break;
       }
