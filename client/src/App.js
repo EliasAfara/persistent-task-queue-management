@@ -1,10 +1,11 @@
 import './App.css';
+import From from './components/From';
 
 function App() {
   return (
     <>
       <div className='container'>
-        <h1>Red Alert Labs Technical Assessment</h1>
+        <From />
       </div>
     </>
   );
