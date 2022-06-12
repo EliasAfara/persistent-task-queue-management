@@ -1,10 +1,9 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const EventEmitter = require('events');
-const { pgClient } = require('./db');
+const { pgClient, pool } = require('./db');
 const lib = require('./lib');
-const eventEmitter = new EventEmitter();
+const schedule = require('node-schedule');
 
 const callbackRouter = require('./routes/callback');
 const eventsRouter = require('./routes/events');
@@ -21,22 +20,52 @@ pgClient.connect((err, client) => {
     const query = client.query('LISTEN new_event');
     pgClient.on('notification', async (event) => {
       const payload = JSON.parse(event.payload);
-      console.log('row added', payload);
-      const { data, callback_id } = payload;
+      // console.log('row added', payload);
+      const { data, event_id, callback_id, scheduled_for } = payload;
       const callback_label = await lib.getEventCallback(callback_id);
+
+      const updateQuery = 'UPDATE events SET state = $1 WHERE event_id = $2';
 
       switch (callback_label) {
         case 'add':
-          lib.add(data.x, data.y);
+          schedule.scheduleJob(scheduled_for, async function () {
+            console.log('add', data.x + data.y);
+
+            const updatedEvent = await pool.query(updateQuery, [
+              'finished',
+              event_id,
+            ]);
+          });
           break;
         case 'subtract':
-          lib.subtract(data.x, data.y);
+          schedule.scheduleJob(scheduled_for, async function () {
+            console.log('subtract', data.x - data.y);
+
+            const updatedEvent = await pool.query(updateQuery, [
+              'finished',
+              event_id,
+            ]);
+          });
           break;
         case 'divide':
-          lib.divide(data.x, data.y);
+          schedule.scheduleJob(scheduled_for, async function () {
+            console.log('divide', data.x / data.y);
+
+            const updatedEvent = await pool.query(updateQuery, [
+              'finished',
+              event_id,
+            ]);
+          });
           break;
         case 'multiply':
-          lib.multiply(data.x, data.y);
+          schedule.scheduleJob(scheduled_for, async function () {
+            console.log('multiply', data.x * data.y);
+
+            const updatedEvent = await pool.query(updateQuery, [
+              'finished',
+              event_id,
+            ]);
+          });
           break;
       }
     });
