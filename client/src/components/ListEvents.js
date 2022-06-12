@@ -42,6 +42,7 @@ const ListEvents = () => {
             <th>Event</th>
             <th>Created At</th>
             <th>Scheduled For</th>
+            <th>Start After</th>
             <th>State</th>
             <th>Delete</th>
           </tr>
@@ -51,6 +52,9 @@ const ListEvents = () => {
             <tr key={event.event_id}>
               <td>{event.type}</td>
               <td>{dayjs(event.created_at).format('DD/MM/YYYY HH:mm:ss')}</td>
+              <td>
+                {dayjs(event.scheduled_for).format('DD/MM/YYYY HH:mm:ss')}
+              </td>
               <td>{event.scheduled_for_time}</td>
               <td>{event.state}</td>
               <td>
