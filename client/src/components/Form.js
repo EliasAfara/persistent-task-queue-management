@@ -9,7 +9,7 @@ const initialData = {
   scheduled_for_time: '',
 };
 
-const From = () => {
+const Form = () => {
   const [formData, setFormData] = useState(initialData);
 
   const { type, data, scheduled_for_time } = formData;
@@ -124,4 +124,4 @@ const From = () => {
   );
 };
 
-export default From;
+export default Form;
