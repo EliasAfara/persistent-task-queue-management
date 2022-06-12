@@ -14,6 +14,21 @@ const ListEvents = () => {
       console.error(err.message);
     }
   };
+
+  const deleteEvent = async (event_id) => {
+    try {
+      const event = await fetch(`http://localhost:3001/events/${event_id}`, {
+        method: 'DELETE',
+      });
+
+      console.log(event);
+
+      setEvents(events.filter((event) => event.event_id !== event_id));
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
   useEffect(() => {
     getEvents();
   }, []);
@@ -28,20 +43,24 @@ const ListEvents = () => {
             <th>Created At</th>
             <th>Scheduled For</th>
             <th>State</th>
+            <th>Delete</th>
           </tr>
         </thead>
         <tbody>
-          {/*<tr>
-            <td>John</td>
-            <td>Doe</td>
-            <td>john@example.com</td>
-          </tr> */}
           {events.map((event) => (
             <tr key={event.event_id}>
               <td>{event.type}</td>
               <td>{dayjs(event.created_at).format('DD/MM/YYYY HH:mm:ss')}</td>
               <td>{event.scheduled_for_time}</td>
               <td>{event.state}</td>
+              <td>
+                <button
+                  className='btn btn-danger'
+                  onClick={() => deleteEvent(event.event_id)}
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
