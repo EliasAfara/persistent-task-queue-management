@@ -1,9 +1,12 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+require('dotenv').config();
 const { pgClient, pool } = require('./db');
 const lib = require('./lib');
 const schedule = require('node-schedule');
+const { Console } = require('console'); // get the Console class
+const fs = require('fs'); // get fs module for creating write streams
 
 const callbackRouter = require('./routes/callback');
 const eventsRouter = require('./routes/events');
@@ -12,9 +15,19 @@ const eventsRouter = require('./routes/events');
 app.use(cors());
 app.use(express.json());
 
+// make a new logger
+const eventsLogger = new Console({
+  stdout: fs.createWriteStream('logs/eventsLog.txt', {
+    flags: 'a+',
+  }), // a write stream (normal log outputs)
+  stderr: fs.createWriteStream('logs/eventsErrorLog.txt', {
+    flags: 'a+',
+  }), // a write stream (error outputs)
+});
+
 pgClient.connect((err, client) => {
   if (err) {
-    console.error('Error in connecting to database', err);
+    eventsLogger.error('Error in connecting to database', err);
   } else {
     console.log('Database Connected');
 
@@ -24,45 +37,88 @@ pgClient.connect((err, client) => {
     // if current time was greater, fire the event callback immediatly
     // else, calculate the remaining time and schedule it.
 
-    lib.continueStillProcessingEvent();
+    lib.continueStillProcessingEvent(eventsLogger);
 
     // listening to event notification after a new event was created
     const query = client.query('LISTEN new_event');
     pgClient.on('notification', async (event) => {
       const payload = JSON.parse(event.payload);
-      // console.log('row added', payload);
-      const { data, event_id, callback_id, scheduled_for } = payload;
-      const callback_label = await lib.getEventCallback(callback_id);
+      const {
+        event_id,
+        type,
+        state,
+        data,
+        scheduled_for_time,
+        scheduled_for,
+        created_at,
+        callback_id,
+      } = payload;
 
-      const updateQuery = 'UPDATE events SET state = $1 WHERE event_id = $2';
+      const callback_label = await lib.getEventCallback(callback_id);
 
       switch (callback_label) {
         case 'add':
           schedule.scheduleJob(scheduled_for, async function () {
-            console.log('add', data.x + data.y);
+            eventsLogger.log(
+              JSON.stringify({
+                type,
+                callback: callback_label,
+                created_at,
+                scheduled_for,
+                output: data.x + data.y,
+                state: 'finished',
+              })
+            );
 
-            await pool.query(updateQuery, ['finished', event_id]);
+            lib.updateEventState('finished', event_id);
           });
           break;
         case 'subtract':
           schedule.scheduleJob(scheduled_for, async function () {
-            console.log('subtract', data.x - data.y);
+            eventsLogger.log(
+              JSON.stringify({
+                type,
+                callback: callback_label,
+                created_at,
+                scheduled_for,
+                output: data.x - data.y,
+                state: 'finished',
+              })
+            );
 
-            await pool.query(updateQuery, ['finished', event_id]);
+            lib.updateEventState('finished', event_id);
           });
           break;
         case 'divide':
           schedule.scheduleJob(scheduled_for, async function () {
-            console.log('divide', data.x / data.y);
+            eventsLogger.log(
+              JSON.stringify({
+                type,
+                callback: callback_label,
+                created_at,
+                scheduled_for,
+                output: data.x / data.y,
+                state: 'finished',
+              })
+            );
 
-            await pool.query(updateQuery, ['finished', event_id]);
+            lib.updateEventState('finished', event_id);
           });
           break;
         case 'multiply':
           schedule.scheduleJob(scheduled_for, async function () {
-            console.log('multiply', data.x * data.y);
+            eventsLogger.log(
+              JSON.stringify({
+                type,
+                callback: callback_label,
+                created_at,
+                scheduled_for,
+                output: data.x * data.y,
+                state: 'finished',
+              })
+            );
 
-            await pool.query(updateQuery, ['finished', event_id]);
+            lib.updateEventState('finished', event_id);
           });
           break;
       }
@@ -77,6 +133,8 @@ pgClient.connect((err, client) => {
 app.use('/callbacks', callbackRouter);
 app.use('/events', eventsRouter);
 
-app.listen('3001', () => {
-  console.log('server running on port 3001');
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => {
+  console.log(`server running on port ${PORT}`);
 });
