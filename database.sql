@@ -32,6 +32,5 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER update_event_trigger AFTER INSERT on events
 FOR EACH ROW EXECUTE PROCEDURE notify_event();
 
-DROP TRIGGER update_event_trigger ON events;
-
-DROP FUNCTION notify_event();
+-- DROP TRIGGER update_event_trigger ON events;
+-- DROP FUNCTION notify_event();
