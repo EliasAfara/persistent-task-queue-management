@@ -1,16 +1,16 @@
 const pg = require('pg');
 const Pool = pg.Pool;
+require('dotenv').config();
 
 const pool = new Pool({
-  user: 'newuserelias',
-  password: 'Lesio1970',
-  host: 'localhost',
-  port: 5432,
-  database: 'ral_tasks_queue',
+  host: process.env.PG_HOST,
+  port: process.env.PG_PORT,
+  user: process.env.PG_USER,
+  password: process.env.PG_PASSWORD,
+  database: process.env.PG_DATABASE,
 });
 
-const connectionString =
-  'postgres://newuserelias:Lesio1970@localhost:5432/ral_tasks_queue';
+const connectionString = process.env.PG_CONNECTION_STRING;
 
 const pgClient = new pg.Client(connectionString);
 
