@@ -1,5 +1,10 @@
 const pool = require('../db');
 
+/**
+ * @route    POST | #endpoint: /callbacks
+ * @desc     Create a callback
+ * @access   Public
+ */
 const registerCallback = async (req, res) => {
   try {
     const { label } = req.body;
@@ -14,6 +19,11 @@ const registerCallback = async (req, res) => {
   }
 };
 
+/**
+ * @route    GET | #endpoint: /callbacks
+ * @desc     Should get the list of all available callbacks
+ * @access   Public
+ */
 const getCallbacks = async (req, res) => {
   try {
     const allCallbacks = await pool.query('SELECT * FROM callback');
@@ -24,16 +34,21 @@ const getCallbacks = async (req, res) => {
   }
 };
 
+/**
+ * @route    GET | #endpoint: /callbacks/:id
+ * @desc     Should get the details of a specific callback
+ * @access   Public
+ */
 const getCallbackById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const availble = await pool.query(
+    const available = await pool.query(
       'select exists(select 1 from callback where callback_id=$1)',
       [id]
     );
 
-    if (!availble.rows[0].exists) {
+    if (!available.rows[0].exists) {
       return res.status(404).json({ msg: 'callback was not found' });
     }
 
@@ -48,17 +63,22 @@ const getCallbackById = async (req, res) => {
   }
 };
 
+/**
+ * @route    PUT | #endpoint: /callbacks/:id
+ * @desc     Update an existing callback
+ * @access   Public
+ */
 const updateCallback = async (req, res) => {
   try {
     const { id } = req.params;
     const { label } = req.body;
 
-    const availble = await pool.query(
+    const available = await pool.query(
       'select exists(select 1 from callback where callback_id=$1)',
       [id]
     );
 
-    if (!availble.rows[0].exists) {
+    if (!available.rows[0].exists) {
       return res.status(404).json({ msg: 'callback was not found' });
     }
 
@@ -67,22 +87,27 @@ const updateCallback = async (req, res) => {
       [label, id]
     );
 
-    res.json('Callback was updated successfuly');
+    res.json('Callback was updated successfully');
   } catch (err) {
     console.log(err.message);
   }
 };
 
+/**
+ * @route    DELETE | #endpoint: /callbacks/:id
+ * @desc     Delete an existing callback
+ * @access   Public
+ */
 const deleteCallback = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const availble = await pool.query(
+    const available = await pool.query(
       'select exists(select 1 from callback where callback_id=$1)',
       [id]
     );
 
-    if (!availble.rows[0].exists) {
+    if (!available.rows[0].exists) {
       return res.status(404).json({ msg: 'callback was not found' });
     }
 
@@ -91,14 +116,17 @@ const deleteCallback = async (req, res) => {
       [id]
     );
 
-    res.json('Callback was deleted successfuly');
+    res.json('Callback was deleted successfully');
   } catch (err) {
     console.log(err.message);
   }
 };
 
-exports.registerCallback = registerCallback;
-exports.getCallbacks = getCallbacks;
-exports.getCallbackById = getCallbackById;
-exports.updateCallback = updateCallback;
-exports.deleteCallback = deleteCallback;
+// export controller functions
+module.exports = {
+  registerCallback,
+  getCallbacks,
+  getCallbackById,
+  updateCallback,
+  deleteCallback,
+};

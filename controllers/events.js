@@ -1,5 +1,10 @@
 const { pool } = require('../db');
 
+/**
+ * @route    POST | #endpoint: /events
+ * @desc     Create an event
+ * @access   Public
+ */
 const registerEvent = async (req, res) => {
   try {
     const { type, data, scheduled_for_time } = req.body;
@@ -46,7 +51,12 @@ const registerEvent = async (req, res) => {
   }
 };
 
-const getEvent = async (req, res) => {
+/**
+ * @route    GET | #endpoint: /events
+ * @desc     Should get the list of all available events
+ * @access   Public
+ */
+const getEvents = async (req, res) => {
   try {
     const allEvent = await pool.query(
       'SELECT * FROM events ORDER BY event_id ASC'
@@ -58,16 +68,21 @@ const getEvent = async (req, res) => {
   }
 };
 
+/**
+ * @route    GET | #endpoint: /events/:id
+ * @desc     Should get the details of a specific event
+ * @access   Public
+ */
 const getEventById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const availble = await pool.query(
+    const available = await pool.query(
       'select exists(select 1 from events where event_id=$1)',
       [id]
     );
 
-    if (!availble.rows[0].exists) {
+    if (!available.rows[0].exists) {
       return res.status(404).json({ msg: 'Event was not found' });
     }
 
@@ -81,17 +96,22 @@ const getEventById = async (req, res) => {
   }
 };
 
+/**
+ * @route    PUT | #endpoint: /events/:id
+ * @desc     Update an existing event
+ * @access   Public
+ */
 const updateEvent = async (req, res) => {
   try {
     const { id } = req.params;
     const { type, data } = req.body;
 
-    const isEventAvailble = await pool.query(
+    const isEventAvailable = await pool.query(
       'select exists(select 1 from events where event_id=$1)',
       [id]
     );
 
-    if (!isEventAvailble.rows[0].exists) {
+    if (!isEventAvailable.rows[0].exists) {
       return res.status(404).json({ msg: 'Event was not found' });
     }
 
@@ -128,23 +148,28 @@ const updateEvent = async (req, res) => {
         [type, data, callback_id, id]
       );
 
-      res.json('Event was updated successfuly');
+      res.json('Event was updated successfully');
     }
   } catch (err) {
     console.log(err.message);
   }
 };
 
+/**
+ * @route    DELETE | #endpoint: /events/:id
+ * @desc     Delete an existing event
+ * @access   Public
+ */
 const deleteEvent = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const availble = await pool.query(
+    const available = await pool.query(
       'select exists(select 1 from events where event_id=$1)',
       [id]
     );
 
-    if (!availble.rows[0].exists) {
+    if (!available.rows[0].exists) {
       return res.status(404).json({ msg: 'Event was not found' });
     }
 
@@ -153,14 +178,17 @@ const deleteEvent = async (req, res) => {
       [id]
     );
 
-    res.json('Event was deleted successfuly');
+    res.json('Event was deleted successfully');
   } catch (err) {
     console.log(err.message);
   }
 };
 
-exports.registerEvent = registerEvent;
-exports.getEvent = getEvent;
-exports.getEventById = getEventById;
-exports.updateEvent = updateEvent;
-exports.deleteEvent = deleteEvent;
+// export controller functions
+module.exports = {
+  registerEvent,
+  getEvents,
+  getEventById,
+  updateEvent,
+  deleteEvent,
+};
