@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./Media/Demo.gif" width="800"/>
+</=>
+
 # Red Alert Labs Technical Assessment
 
 > Asynchronous and persistent task queue management is a pretty common framework used in implementations to allow clean modularisation, control, scalability and support for failsafe. \
