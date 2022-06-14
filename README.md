@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./Media/Demo.gif" width="800"/>
+  <img src="./Media/Demo.gif" width="700"/>
 </=>
 
 # Red Alert Labs Technical Assessment
