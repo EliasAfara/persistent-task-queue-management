@@ -40,7 +40,8 @@ pgClient.connect((err, client) => {
     lib.continueStillProcessingEvent(eventsLogger);
 
     // listening to event notification after a new event was created
-    const query = client.query('LISTEN new_event');
+    const query = client.query('LISTEN new_event'); // listener
+    // listening to the event
     pgClient.on('notification', async (event) => {
       const payload = JSON.parse(event.payload);
       const {
