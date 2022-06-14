@@ -6,24 +6,24 @@
 
 <hr>
 
-## Table of Contents
+## Table of contents
 
-- [Objective 🎯](#objective-🎯)
-- [How it works 📜](#how-it-works-📜)
-- [Setup ⚙️](#setup-⚙️)
-  - [PostgreSQL Database 🗃️](#postgresql-database-🗃️)
+- [Objective 🎯](#objective-)
+- [How it works 📜](#how-it-works-)
+- [Setup ⚙️](#setup)
+  - [PostgreSQL Database](#postgresql-database)
   - [Inside the Project Root Directory](#inside-the-project-root-directory)
   - [Inside the Client Directory](#inside-the-client-directory)
-- [Project Structure 🏗️](#project-structure-🏗️)
+- [Project Structure 📁](#project-structure)
   - [Client](#client)
   - [Server](#server)
 - [RESTful API endpoints](#restful-api-endpoints)
-- [Future Work 🔜](#future-work-🔜)
-- [Logging 🗄](#logging-🗄)
-- [Dependancies Installed 🛠](#dependancies-installed-🛠)
-  - [Server](#server-1)
-  - [Client](#client-1)
-- [Code Snippet Explanation ❗](#code-snippet-explanation-❗)
+- [Future Work 🔜](#future-work-)
+- [Logging 🗄](#logging-)
+- [Dependancies Installed 🛠](#dependancies-installed-)
+  - [Server](#server)
+  - [Client](#client)
+- [Code Snippet Explanation ❗](#code-snippet-explanation-)
   - [PostgreSQL event triggers with Nodejs Listen and Notify](#postgresql-event-triggers-with-nodejs-listen-and-notify)
   - [Nodejs Schedule Events](#nodejs-schedule-events)
 
@@ -46,7 +46,7 @@ Technology Stack used: Nodejs (v16.14.0), Express (v4.18.1), Reactjs (v18.1.0), 
 Each event has a callback method assigned to it that executes upon the event call. As shown in the table below.
 
 | Event          | Callback      |
-| -------------- |:-------------:|
+| :------------: |:-------------:|
 | Addition       | Add           |
 | Subtraction    | Subtract      |
 | Division       | Divide        |
@@ -64,9 +64,9 @@ In case the server shuts down while some events are still in processing state. A
 
 Check the code snippet and explanation on how events are scheduled, [here](#nodejs-schedule-events).
 
-## Setup ⚙️
+## Setup
 
-### PostgreSQL Database 🗃️
+### PostgreSQL Database
 
 To setup the PostgreSQL database please follow the steps in order.
 
@@ -97,7 +97,7 @@ Open up [`database.sql`](https://github.com/EliasAfara/red-alert-labs-technical-
 - Run `npm install`
 - Run `npm start`
 
-## Project Structure 🏗️
+## Project Structure
 
 ### Client
 
@@ -164,7 +164,21 @@ routes
 
 ## Future Work 🔜
 
-What could be done in future versions of my proposal?
+### Improvments
+
+- Use websockets to send the data after the event state is updated and listen to the client side to rerender the dom and update the displayed events.
+- We can log the finished events into their own DB table instead of a file.
+- Take into account all the event states and implement code to use them.
+- Run serveral instances of the application, just in case an instance restarts or shutsdown, other instances will still be available.
+
+### Different approach
+
+Priority queue: Events executes not according to its scheduled time but according to the event priporty inside the database.
+The `events` Database table will be almost the same but we will replace `scheduled_for_time` and `scheduled_for` with `priority` and `processed_at`.
+
+Event priority will be assigned by the user. The priority can be a positive numeric value (E.g. from 1 to 10) that is used to determine which events get executed first: events with a higher priority number are executed first.
+
+One can specify the number of events which can be executed at one time within each event Queue.
 
 ## Logging 🗄
 
