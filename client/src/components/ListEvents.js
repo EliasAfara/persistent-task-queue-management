@@ -9,7 +9,7 @@ const ListEvents = () => {
       const response = await fetch('http://localhost:3001/events');
       const jsonData = await response.json();
 
-      setEvents(jsonData);
+      setEvents(jsonData.reverse());
     } catch (err) {
       console.error(err.message);
     }
