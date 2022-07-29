@@ -42,7 +42,7 @@ const Form = () => {
 
   return (
     <>
-      <h1 className='text-center mt-5'>Red Alert Labs Technical Assessment</h1>
+      <h1 className='text-center mt-5'>Persistent Task Queue Manager</h1>
       <form className='mt-5' onSubmit={onSubmitForm}>
         <div className='form-row'>
           <div className='form-group col-md-6'>
